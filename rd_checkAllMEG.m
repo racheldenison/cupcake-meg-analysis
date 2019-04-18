@@ -147,7 +147,7 @@ figure
 plot(t, tr([2 4],:))
 xlim([0 10])
 
-% eye tracking data
+% eye tracking data and triggers
 eye = data.trial{1}(eyeChannels,:);
 
 figure
@@ -169,6 +169,12 @@ xlim([t(1) t(end)])
 ylim([-1 1])
 xlabel('Time (s)')
 legend('MEG x','eyetracker x')
+
+figure
+hold on
+plot(t, tr(1,:))
+plot((double(eyeTiming.trigger1) - eyeT0)/1000, 4*ones(size(eyeTiming.trigger1)), '.', 'MarkerSize', 20)
+
 
 %% COMBINED
 % plot image
