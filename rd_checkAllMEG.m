@@ -1,5 +1,7 @@
 % rd_checkAllMEG.m
 
+% run from MEG_Analysis
+
 %% setup 
 exptDir = '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 % exptDir = '/Users/karentian/Google Drive/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
@@ -17,6 +19,10 @@ behavFile = dir(behavDataName);
 behavDataFile = sprintf('%s/%s/%s', exptDir, behavDir, behavFile.name);
 
 megDataFile = sprintf('%s/%s/%s.sqd', exptDir, megDir, subject);
+
+eyeDataName = sprintf('%s/%s/%s_run%02d*.edf', exptDir, eyeDir, subject, run);
+eyeFile = dir(eyeDataName);
+eyeDataFile = sprintf('%s/%s/%s', '../MEG_Expt/Pilot1_Aperture', eyeDir, eyeFile.name);
 
 megChannels = 1:157;
 refChannels = 158:160;
@@ -39,6 +45,40 @@ respTimes = respTimes(~isnan(respTimes));
 
 responseIdx = strcmp(expt.trials_headers,'response');
 resp = expt.trials(:,responseIdx);
+
+%% EYE TRACKING
+%% load eye data
+edf = edfmex(eyeDataFile);
+
+%% get samples
+S = edf.FSAMPLE;
+eyeIdx = 2;
+
+% pupil area
+pa = S.pa(eyeIdx,:);
+
+% gaze position
+gx = S.gx(eyeIdx,:);
+gy = S.gy(eyeIdx,:);
+
+%% get events of interest
+E = edf.FEVENT;
+
+% get message and event info
+msg = {E.message};
+msgTimes = [E.sttime];
+evt = {E.codestring};
+
+% get event times
+eventFixIdx = find(strcmp(msg, 'EVENT_FIX'));
+eyeTiming.fix = msgTimes(eventFixIdx);
+
+eventTrigger1Idx = find(strcmp(msg, 'MEG Trigger: 1'));
+eyeTiming.trigger1 = msgTimes(eventTrigger1Idx);
+
+t0Eye = double(S.time(S.time==eyeTiming.trigger1(1)));
+tEye = (double(S.time) - t0Eye)/1000;
+
 
 %% MEG
 %% ft data broswer viewing continuous raw data: 
@@ -75,7 +115,7 @@ for iT = 1:numel(trigNames)
     trigTiming.(trigName) = triggerTimes(triggerIDs==iT);
 end
 
-%% plot trigger and peripherals data
+%% plot trigger and corresponding peripherals data
 thresh = 4;
 tr = data.trial{1}(triggerChannels(1:nTrigs),:);
 t0 = data.time{1}(find(tr(1,:)<thresh,1)); % time of first trigger
@@ -101,6 +141,34 @@ plot(t, aud)
 plot(t, tr(3,:))
 plot(toneTimes, 3*ones(size(toneTimes)), '.', 'MarkerSize', 20)
 xlim([1.5 2])
+
+% image and target triggers
+figure
+plot(t, tr([2 4],:))
+xlim([0 10])
+
+% eye tracking data
+eye = data.trial{1}(eyeChannels,:);
+
+figure
+subplot(3,1,1)
+plot(t, eye)
+xlim([t(1) t(end)])
+ylim([-1 1])
+legend('x','y')
+subplot(3,1,2)
+plot(tEye, [gx' gy'])
+xlim([t(1) t(end)])
+ylim([0 1280])
+legend('x','y')
+subplot(3,1,3)
+hold on
+plot(t, eye(1,:) - eye(1,t==0))
+plot(tEye, (gx - gx(tEye==0))/1000)
+xlim([t(1) t(end)])
+ylim([-1 1])
+xlabel('Time (s)')
+legend('MEG x','eyetracker x')
 
 %% COMBINED
 % plot image
