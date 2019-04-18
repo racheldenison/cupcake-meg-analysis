@@ -6,7 +6,7 @@ exptDir = '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Ex
 behavDir = 'data';
 eyeDir = 'eyedata';
 megDir = 'megdata';
-subject = 'kt_allButtons';
+subject = 'kt_allTargets';
 run = 1;
 
 trigNames = {'fix','im','tone','target','resp'};
@@ -30,8 +30,12 @@ photodiodeChannel = 192;
 load(behavDataFile)
 
 imTimes = expt.timing.timeIm - expt.timing.startTime;
-respTimes = expt.timing.timeResp - expt.timing.startTime;
+
 toneTimes = expt.timing.timeTone - expt.timing.startTime;
+toneTimes = toneTimes(~isnan(toneTimes));
+
+respTimes = expt.timing.timeResp - expt.timing.startTime;
+respTimes = respTimes(~isnan(respTimes));
 
 responseIdx = strcmp(expt.trials_headers,'response');
 resp = expt.trials(:,responseIdx);
@@ -128,7 +132,7 @@ xlabel('Time difference (s)')
 
 
 % plot response
-respDiff = trigTiming.resp(1:19) - respTimes(1:19);
+respDiff = trigTiming.resp - respTimes;
 
 figure
 subplot(2,1,1)
