@@ -19,7 +19,7 @@ if nargin<3 || isempty(verbose)
 end
 
 %% plot triggers from each channel
-f = figure;
+figure;
 hold all
 
 allTriggers = [];

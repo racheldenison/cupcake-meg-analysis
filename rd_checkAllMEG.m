@@ -10,6 +10,7 @@ subject = 'kt_allButtons';
 run = 1;
 
 trigNames = {'fix','im','tone','target','resp'};
+nTrigs = numel(trigNames);
 
 behavDataName = sprintf('%s/%s/%s_run%02d*.mat', exptDir, behavDir, subject, run);
 behavFile = dir(behavDataName);
@@ -23,6 +24,17 @@ triggerChannels = 161:168;
 eyeChannels = 177:178;
 audioChannel = 191;
 photodiodeChannel = 192;
+
+%% BEHAVIOR
+%% load data
+load(behavDataFile)
+
+imTimes = expt.timing.timeIm - expt.timing.startTime;
+respTimes = expt.timing.timeResp - expt.timing.startTime;
+toneTimes = expt.timing.timeTone - expt.timing.startTime;
+
+responseIdx = strcmp(expt.trials_headers,'response');
+resp = expt.trials(:,responseIdx);
 
 %% MEG
 %% ft data broswer viewing continuous raw data: 
@@ -48,8 +60,8 @@ artf                     = ft_databrowser(cfg, data);
 %% check triggers
 triggers = rd_checkTriggers(megDataFile);
 
-triggerTimes = triggers(:,1)/1000; % s
-triggerTimes = triggerTimes - triggerTimes(1);
+triggerT0 = triggers(1,1); % time of first trigger, corresponds to experiment start time
+triggerTimes = (triggers(:,1) - triggerT0)/1000; % s
 triggerIDs = triggers(:,2);
 
 %% specific trigger indices and times
@@ -59,26 +71,36 @@ for iT = 1:numel(trigNames)
     trigTiming.(trigName) = triggerTimes(triggerIDs==iT);
 end
 
-%% plot image triggers with photodiode
+%% plot trigger and peripherals data
+thresh = 4;
+tr = data.trial{1}(triggerChannels(1:nTrigs),:);
+t0 = data.time{1}(find(tr(1,:)<thresh,1)); % time of first trigger
+t = data.time{1} - t0;
 
+% image triggers with photodiode
+pd = data.trial{1}(photodiodeChannel,:);
 
+figure
+hold on
+plot(t, pd)
+plot(t, tr(1:2,:))
+plot(imTimes, 3*ones(size(imTimes)), '.', 'MarkerSize', 20)
+plot(trigTiming.im, 3.5*ones(size(trigTiming.im)), '.', 'MarkerSize', 20)
+xlim([0 10])
 
+% tone triggers with audio
+aud = data.trial{1}(audioChannel,:);
 
-
-%% BEHAVIOR
-%% load data
-load(behavDataFile)
-
-imTimes = expt.timing.timeIm - expt.timing.startTime;
-respTimes = expt.timing.timeResp - expt.timing.startTime;
-toneTimes = expt.timing.timeTone - expt.timing.startTime;
-
-responseIdx = strcmp(expt.trials_headers,'response');
-resp = expt.trials(:,responseIdx);
+figure
+hold on
+plot(t, aud)
+plot(t, tr(3,:))
+plot(toneTimes, 3*ones(size(toneTimes)), '.', 'MarkerSize', 20)
+xlim([1.5 2])
 
 %% COMBINED
 % plot image
-imDiff = imTimes - trigTiming.im;
+imDiff = trigTiming.im - imTimes;
 
 figure
 subplot(2,1,1)
@@ -92,7 +114,7 @@ xlabel('Time difference (s)')
 
 
 % plot tone
-toneDiff = toneTimes - trigTiming.tone;
+toneDiff = trigTiming.tone - toneTimes;
 
 figure
 subplot(2,1,1)
@@ -106,7 +128,7 @@ xlabel('Time difference (s)')
 
 
 % plot response
-respDiff = respTimes(1:19) - trigTiming.resp(1:19);
+respDiff = trigTiming.resp(1:19) - respTimes(1:19);
 
 figure
 subplot(2,1,1)
