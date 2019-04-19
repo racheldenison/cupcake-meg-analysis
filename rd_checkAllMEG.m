@@ -190,7 +190,6 @@ subplot(2,1,2)
 histogram(imDiff)
 xlabel('Time difference (s)')
 
-
 % plot tone
 toneDiff = trigTiming.tone - toneTimes;
 
@@ -204,7 +203,6 @@ subplot(2,1,2)
 histogram(toneDiff)
 xlabel('Time difference (s)')
 
-
 % plot response
 respDiff = trigTiming.resp - respTimes;
 
@@ -217,5 +215,4 @@ xlabel('Time (s)')
 subplot(2,1,2)
 histogram(respDiff)
 xlabel('Time difference (s)')
-
 
