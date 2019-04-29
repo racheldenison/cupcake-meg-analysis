@@ -3,26 +3,29 @@
 % run from MEG_Analysis
 
 %% setup 
-exptDir = '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
-% exptDir = '/Users/karentian/Google Drive/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
-behavDir = 'data';
-eyeDir = 'eyedata';
-megDir = 'megdata';
-subject = 'kt_allTargets';
+exptDir = '/Local/Users/denison/Data/Cupcake';
+sessionDir = 'R1507_20190425';
+
+behavDir = 'Behavior';
+eyeDir = 'Eye';
+megDir = 'MEG';
+
+
+subjectMEG = 'R1507_CupcakeAperture_4.25.19';
 run = 1;
+
+behavDataName = sprintf('%s/%s/%s/%s_run%02d*.mat', exptDir, behavDir, sessionDir, sessionDir, run);
+behavFile = dir(behavDataName);
+behavDataFile = sprintf('%s/%s/%s/%s', exptDir, behavDir, sessionDir, behavFile.name);
+
+megDataFile = sprintf('%s/%s/%s/%s_run%02d.sqd', exptDir, megDir, sessionDir, subjectMEG, run);
+
+eyeDataName = sprintf('%s/%s/%s/%s_run%02d*.edf', exptDir, eyeDir, sessionDir, sessionDir, run);
+eyeFile = dir(eyeDataName);
+eyeDataFile = sprintf('%s/%s/%s/%s', exptDir, eyeDir, sessionDir, eyeFile.name);
 
 trigNames = {'fix','im','tone','target','resp'};
 nTrigs = numel(trigNames);
-
-behavDataName = sprintf('%s/%s/%s_run%02d*.mat', exptDir, behavDir, subject, run);
-behavFile = dir(behavDataName);
-behavDataFile = sprintf('%s/%s/%s', exptDir, behavDir, behavFile.name);
-
-megDataFile = sprintf('%s/%s/%s.sqd', exptDir, megDir, subject);
-
-eyeDataName = sprintf('%s/%s/%s_run%02d*.edf', exptDir, eyeDir, subject, run);
-eyeFile = dir(eyeDataName);
-eyeDataFile = sprintf('%s/%s/%s', '../MEG_Expt/Pilot1_Aperture', eyeDir, eyeFile.name);
 
 megChannels = 1:157;
 refChannels = 158:160;
@@ -173,7 +176,7 @@ legend('MEG x','eyetracker x')
 figure
 hold on
 plot(t, tr(1,:))
-plot((double(eyeTiming.trigger1) - eyeT0)/1000, 4*ones(size(eyeTiming.trigger1)), '.', 'MarkerSize', 20)
+plot((double(eyeTiming.trigger1) - t0Eye)/1000, 4*ones(size(eyeTiming.trigger1)), '.', 'MarkerSize', 20)
 
 
 %% COMBINED
