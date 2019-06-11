@@ -1,15 +1,15 @@
-%% add fieldtrip to your path
-
+%% add paths
 % addpath(genpath('/Users/rachel/Desktop/ft_code'))
 % addpath(genpath('/Users/rachel/Software/fieldtrip-20140805'))
-% ft_defaults
 
 % don't use addpath(genpath('/Users/karentian/Dropbox/Dropbox/CarrascoLab/fieldtrip-20190416'))
-restoredefaultpath
-addpath(genpath('/Users/karentian/Dropbox/Dropbox/CarrascoLab/github/meg_utils'))
-addpath /Users/karentian/Dropbox/Dropbox/CarrascoLab/fieldtrip-20190416
+% restoredefaultpath
+% addpath(genpath('/Users/karentian/Dropbox/Dropbox/CarrascoLab/github/meg_utils'))
+% addpath /Users/karentian/Dropbox/Dropbox/CarrascoLab/fieldtrip-20190416
+
 ft_defaults % defaults and configures up the minimal required path settings 
 
+%% define channels
 % remember, these channel numbers use one indexing
 megChannels = 1:157;
 refChannels = 158:160;
@@ -19,13 +19,15 @@ audioChannel = 191;
 photodiodeChannel = 192;
 
 %% load & read dataset 
-exptDir = '/Users/karentian/Google Drive/Cupcake/Code/MEG_Expt/Pilot1_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
-sessionDir = 'megdata';
-filename = 'kt_allButtons';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Data/MEG'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
+sessionDir = 'R1507_20190425';
+filename = 'R1507_CupcakeAperture_4.25.19_disk_ebi';
 
-dataDir = sprintf('%s/%s/', exptDir, sessionDir);
-prepDir = sprintf('%s/prep/', dataDir);
-sqdfile = [dataDir,filename,'.sqd'];
+dataDir = sprintf('%s/%s', exptDir, sessionDir);
+prepDir = sprintf('%s/prep', dataDir);
+sqdfile = sprintf('%s/%s.sqd', dataDir, filename); % added 
+% sqdfile = [dataDir,filename,'.sqd']; 
+
 dat = ft_read_data(sqdfile);
 hdr = ft_read_header(sqdfile);
 
@@ -36,13 +38,13 @@ hdr = ft_read_header(sqdfile);
 cfg                     = [];
 cfg.dataset             = sqdfile;
 cfg.trialdef.prestim    = 1; %0; %0.5; % sec
-cfg.trialdef.poststim   = 1; %2.3; %3.1;
+cfg.trialdef.poststim   = 2; %2.3; %3.1;
 cfg.trialdef.trig       = triggerChannels(2); 
 threshold = 2.5;
 [trl,Events]            = mytrialfun_all(cfg,threshold,[]);
 
 prep_data             = ft_preprocessing(struct('dataset',sqdfile,...
-    'channel','all','continuous','yes','trl',trl)); % 'channel','MEG'
+    'channel','MEG','continuous','yes','trl',trl)); % 'channel','MEG'
 
 % show sample number and trigger channel for each trial
 triggers = [Events.trigger]';
@@ -57,14 +59,14 @@ trigger_info = [trig_ind,triggers,trl,type];
 if ~exist(prepDir,'dir')
     mkdir(prepDir)
 end
-save ([prepDir,filename,'_prep.mat'],'prep_data', '-v7.3')
+save(sprintf('%s/%s_prep.mat', prepDir, filename),'prep_data', '-v7.3')
 
 %% ft_rejectvisual (summary mode): visual check of outliers
 cfg          = [];
 cfg.method = 'summary';
 cfg.alim     = 1e-12;  % scaling (10 fT/cm)
 cfg.megscale = 1;
-cfg.channel = 'all'; %'MEG';
+cfg.channel = 'MEG'; %'all';
 % cfg.keepchannel = 'yes';
 dummy        = ft_rejectvisual(cfg,prep_data);
 [~,bc,~] = intersect(prep_data.label,setdiff(prep_data.label,dummy.label));
@@ -78,11 +80,10 @@ dummy        = ft_rejectvisual(cfg,prep_data);
 % selection box
 
 cfg          = [];
-% cfg.channel  = [143 153 9 12 62 44 80 122 95 61 75 10 137 109 138 30 41,...
-%     60 14 46 13 43 66 57 77 93 120 145 152 35 36 139 146 64 59 16 151,...
-%     149 49 38 6 4 51 50 7 55 98 104 54 69 86 88 99 72 71 117 102 147 85,...
-%     134 32 126 155 67 142 133 113 31 73 53 156 116 91 33 74 37 129 63 47 5 ];
-cfg.channel = [refChannels, triggerChannels, eyeChannels, audioChannel, photodiodeChannel];
+cfg.channel  = [143 153 9 12 62 44 80 122 95 61 75 10 137 109 138 30 41,...
+    60 14 46 13 43 66 57 77 93 120 145 152 35 36 139 146 64 59 16 151,...
+    149 49 38 6 4 51 50 7 55 98 104 54 69 86 88 99 72 71 117 102 147 85,...
+    134 32 126 155 67 142 133 113 31 73 53 156 116 91 33 74 37 129 63 47 5 ];
 cfg.viewmode = 'vertical';
 artf         = ft_databrowser(cfg,prep_data); % saved artifact info in artf.artfctdef.visual.artifact
 
@@ -154,10 +155,12 @@ save([prepDir,filename,'_prepCleanData.mat'],'cleanPrepData', '-v7.3')
 
 %% save trials_rejected and channels_rejected separately
 trials_rejected = cleanPrepData.trials_rejected(:,1);
-save([prepDir '/trials_rejected.mat'], 'trials_rejected')
+save([prepDir '/trials_rejected.mat'], 'trials_rejected') 
+% save([ sprintf('prepDir/%s_trials_rejected.mat', filename)], 'trials_rejected')
 
 channels_rejected = cleanPrepData.channels_rejected;
-save([prepDir '/channels_rejected.mat'], 'channels_rejected')
+save([prepDir '/channels_rejected.mat'], 'channels_rejected') 
+% save(sprintf('%s/%s_channels_rejected.mat', prepDir, filename), 'channels_rejected')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  data broswer viewing continuous raw data: 

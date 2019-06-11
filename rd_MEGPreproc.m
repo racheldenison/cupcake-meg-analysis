@@ -23,16 +23,17 @@ Fl = 60; % line noise frequency
 environmentalDenoise = 1;
 applyLineNoiseFilter = 0;
 removeBadChannels = 1; 
-TSPCA = 0;
+TSPCA = 1;
 components = 0; % pca/ica
 interpolate = 1;
 
 % trial definition (for pca/ica)
 trialDef.trialFunHandle = @mytrialfun_all;
-trialDef.prestim = 0;
-trialDef.poststim = 5.5;
-trialDef.trig = 167; % blank blocks
+trialDef.prestim = 1; 
+trialDef.poststim = 2; 
+trialDef.trig = triggerChannels(2)+1; 
 trialDef.nTrigsExpected = [];
+trialDef.threshold = 2.5;
 
 % % for finding saturating epochs
 % trialTriggerChannels = [161:164 167]; % stim/blank blocks
@@ -200,8 +201,20 @@ end
 %% PCA/ICA
 if components
     analStr = [analStr 'c'];
-    ft_cleandata = meg_pca_ica(dataset, badChannels, trialDef);
-    data(:,1:157) = ft_cleandata.trial{1}'./1e-13;
+    [ft_cleandata, compInfo] = meg_pca_ica(dataset, badChannels, trialDef);
+    data(:,1:157) = ft_cleandata.trial{1}'./1e-15; % convert from Tesla to femtoTesla
+    
+    if ~isempty(compInfo.PCA_rejected_components)
+        figure
+        imshow(compInfo.PCA_screenshot)
+        rd_supertitle(['PCA: rejected components' sprintf(' %d', compInfo.PCA_rejected_components)])
+    end
+    
+    if ~isempty(compInfo.ICA_rejected_components)
+        figure
+        imshow(compInfo.ICA_screenshot)
+        rd_supertitle(['ICA: rejected components' sprintf(' %d', compInfo.ICA_rejected_components)])
+    end
     
     clear ft_cleandata
 end
