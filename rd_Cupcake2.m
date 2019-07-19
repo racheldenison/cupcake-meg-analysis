@@ -6,8 +6,8 @@ exptDir = '/Local/Users/denison/Data/Cupcake';
 
 megDir = 'MEG';
 
-sessionDir = 'R1507_20190425/concentric';
-analStr = 'concentric_ebci';
+sessionDir = 'R1507_20190425'; %'R1507_20190425/disk';
+analStr = 'ebi'; %'disk_ebci';
 
 fileBase = sessionDirToFileBase(sessionDir, exptName);
 
@@ -19,7 +19,7 @@ figDir = sprintf('%s/figures/%s', megDataDir, analStr);
 % load data header for plotting topologies
 load data/data_hdr.mat
 
-saveFigs = 0;
+saveFigs = 1;
 
 %% Load data
 dataFile = dir(sprintf('%s/*%s_condData.mat', matDir, analStr));
@@ -125,7 +125,7 @@ ylabel('Trial')
 title(sprintf('Orientation %d, channels %d-%d', orientations(iOr), channels(1), channels(end)))
 
 %% Topo movie
-times = 0:10:800;
+times = 0:10:400;
 clims = [-500 500];
 % clims = [-1500 1500];
 
@@ -147,25 +147,33 @@ for iT = 1:numel(times)
 end
 
 %% Topo of each orientation at some time
-selectedTime = 120;
+selectedTimes = [120 185 260];
 clims = [-700 700];
 
-figure('Position',[50 700 2000 500])
-for iOr = 1:nOr
-    subplot(1,nOr,iOr)
-    vals = condDataMean(t==selectedTime,:,iOr);
+for iTime = 1:numel(selectedTimes)
+    selectedTime = selectedTimes(iTime);
     
-    ssm_plotOnMesh(vals, '', [], data_hdr, '2d',[]);
-    set(gca,'CLim',clims)
-    title(sprintf('%2.1f%s', orientations(iOr), char(176)))
+    figure('Position',[50 700 2000 500])
+    for iOr = 1:nOr
+        subplot(1,nOr,iOr)
+        vals = condDataMean(t==selectedTime,:,iOr);
+        
+        ssm_plotOnMesh(vals, '', [], data_hdr, '2d',[]);
+        set(gca,'CLim',clims)
+        title(sprintf('%2.1f%s', orientations(iOr), char(176)))
+    end
+    rd_supertitle2(sprintf('%d ms', selectedTime))
+    
+    if saveFigs
+        rd_saveAllFigs(gcf, {sprintf('orientations_%dms', selectedTime)}, 'map', figDir);
+    end
 end
-rd_supertitle2(sprintf('%d ms', selectedTime))
 
 %% Topo of different trials at some time
 selectedTime = 120;
 % clims = [-700 700];
 
-trialsToPlot = [2 75 76 77];
+trialsToPlot = [2 75 76 78];
 iOr = 1;
 
 figure('Position',[50 700 1200 500])
@@ -181,7 +189,15 @@ for iTrial = 1:numel(trialsToPlot)
 end
 rd_supertitle2(sprintf('%d ms', selectedTime))
 
+if saveFigs
+    rd_saveAllFigs(gcf, {sprintf('orientation%d_%dms_sampleTrials', orientations(iOr), selectedTime)}, 'map', figDir);
+end
+
 %% Pairwise correlations between split half means
+% selectedChannels = [13 14 51 2 20 134 15 47 6 25]; % ebci
+selectedChannels = [134 15 43 107 14 6 90 86 10 60]; % ebi
+% selectedChannels = 1:157;
+
 selectedTime = 120;
 iT = find(t==selectedTime);
 
@@ -192,14 +208,14 @@ r = [];
 for iOr = 1:nOr
     for iTS = 1:nTrialSets
         trials1 = trialSets{iTS};
-        vals1 = squeeze(nanmean(condData(iT,:,trials1,iOr),3));
+        vals1 = squeeze(nanmean(condData(iT,selectedChannels,trials1,iOr),3));
         for jTS = 1:nTrialSets
             trials2 = trialSets{jTS};
             for jOr = 1:nOr
                 if iTS==jTS
                     r(iOr,jOr,iTS,jTS) = nan;
                 else
-                    vals2 = squeeze(nanmean(condData(iT,:,trials2,jOr),3));
+                    vals2 = squeeze(nanmean(condData(iT,selectedChannels,trials2,jOr),3));
                     r(iOr,jOr,iTS,jTS) = corr(vals1', vals2','rows','pairwise');
                 end
             end
@@ -209,13 +225,33 @@ end
 
 rMean = nanmean(nanmean(r,4),3);
 
-figure
-imagesc(squeeze(r(1,4,:,:)),[-1 1])
-colorbar
+[rDiags, d] = spdiags(rMean);
+rDiags2 = [rDiags(:,nOr), rDiags(:,1:nOr-1) + rDiags(:,nOr+1:end)];
 
 figure
 imagesc(rMean,[-1 1])
 colorbar
+ax = gca;
+ax.XTickLabel = orientations;
+ax.YTickLabel = orientations;
+xlabel('Orientation 1')
+ylabel('Orientation 2')
+title(sprintf('Correlation between split half means at %d ms', selectedTime))
+
+if saveFigs
+    rd_saveAllFigs(gcf, {sprintf('correlationSplitHalf_%dms', selectedTime)}, 'im', figDir);
+end
+
+figure
+plot(orientations, mean(rDiags2))
+xlabel('Orientation distance')
+ylabel('Correlation, r')
+set(gca,'XTick',orientations)
+title(sprintf('Correlation between split half means at %d ms', selectedTime))
+
+if saveFigs
+    rd_saveAllFigs(gcf, {sprintf('correlationSplitHalf_%dms', selectedTime)}, 'plot', figDir);
+end
 
 
 %% Pairwise correlations between all pairs of trials
@@ -244,13 +280,39 @@ fprintf('\n')
 
 rMean = nanmean(nanmean(r,4),3);
 
-figure
+[rDiags, d] = spdiags(rMean);
+rDiags2 = [rDiags(:,nOr), rDiags(:,1:nOr-1) + rDiags(:,nOr+1:end)];
+
+f = [];
+f(1) = figure;
 imagesc(squeeze(r(1,1,:,:)),[-1 1])
 colorbar
+xlabel('Trial 2')
+ylabel('Trial 1')
+title(sprintf('Correlation between all pairs of trials at %d ms, orientation 0 vs. 0', selectedTime))
 
-figure
+f(2) = figure;
 imagesc(rMean)
 colorbar
+ax = gca;
+ax.XTickLabel = orientations;
+ax.YTickLabel = orientations;
+xlabel('Orientation 2')
+ylabel('Orientation 1')
+title(sprintf('Mean correlation between all pairs of trials at %d ms', selectedTime))
 
+if saveFigs
+    rd_saveAllFigs(f, {sprintf('correlationTrialPairs_%dms_exampleTrials', selectedTime), ...
+        sprintf('correlationTrialPairs_%dms', selectedTime)}, 'im', figDir);
+end
 
+figure
+plot(orientations, mean(rDiags2))
+xlabel('Orientation distance')
+ylabel('Correlation, r')
+set(gca,'XTick',orientations)
+title(sprintf('Correlation between split half means at %d ms', selectedTime))
 
+if saveFigs
+    rd_saveAllFigs(gcf, {sprintf('correlationTrialPairs_%dms', selectedTime)}, 'plot', figDir);
+end
