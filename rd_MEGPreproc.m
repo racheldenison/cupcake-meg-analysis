@@ -23,8 +23,8 @@ Fl = 60; % line noise frequency
 environmentalDenoise = 1;
 applyLineNoiseFilter = 0;
 removeBadChannels = 1; 
-TSPCA = 1;
-components = 0; % pca/ica
+TSPCA = 0;
+components = 1; % pca/ica
 interpolate = 1;
 
 % trial definition (for pca/ica)

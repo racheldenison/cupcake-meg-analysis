@@ -3,14 +3,15 @@
 
 %% Setup
 exptName = 'CupcakeAperture';
-exptDir = '/Local/Users/denison/Data/Cupcake';
+% exptDir = '/Local/Users/denison/Data/Cupcake';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 
 megDir = 'MEG';
 behavDir = 'Behavior';
 
-sessionDir = 'R1507_20190425'; %'R1507_20190425/concentric';
+sessionDir = 'R1507_20190725/disk'; %'R1507_20190425/concentric';
 fileBase = sessionDirToFileBase(sessionDir, exptName);
-analStr = 'ebi'; %'concentric_ebci'; % '', 'eti', 'ebi', etc.
+analStr = 'disk_ebi'; %'concentric_ebci'; % '', 'eti', 'ebi', etc.
 excludeTrialsFt = 1;
 excludeSaturatedEpochs = 1;
 

@@ -2,12 +2,13 @@
 
 %% Setup
 exptName = 'CupcakeAperture';
-exptDir = '/Local/Users/denison/Data/Cupcake';
+% exptDir = '/Local/Users/denison/Data/Cupcake';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 
 megDir = 'MEG';
 
-sessionDir = 'R1507_20190425'; %'R1507_20190425/concentric';
-analStr = 'ebi'; %'concentric_ebci';
+sessionDir = 'R1507_20190725/disk'; %'R1507_20190425/concentric';
+analStr = 'disk_ebi'; %'concentric_ebci';
 
 fileBase = sessionDirToFileBase(sessionDir, exptName);
 
@@ -68,7 +69,8 @@ svmops = sprintf('-s 0 -t 0 -c 1 -v %d -q', kfold);
 svmopsNoCV = '-s 0 -t 0 -c 1 -q';
 decodeAnalStr = sprintf('sp%d_nt%d', sp, nt);
 figName = {'classAcc'};
-classNames = {'0 vs 90','22.5 vs 112.5','45 vs 135','67.5 vs 157.5'};
+% classNames = {'0 vs 90','22.5 vs 112.5','45 vs 135','67.5 vs 157.5'};
+classNames = {'0 vs 90'};
 
 if syntheticTrials
     nReps = 1;
@@ -220,7 +222,7 @@ end
 
 %% plot
 xlims = targetWindow;
-ylims = [30 80];
+ylims = [30 100];
 
 figure
 hold on
@@ -261,7 +263,7 @@ end
 twins = {[110 140], [140 230], [230 280], [280 315], [110 315]};
 
 if getWeights
-    clims = [0 .6];
+    clims = [0 1.5];
 
     for iTW = 1:numel(twins)
         twin = twins{iTW};

@@ -1,9 +1,10 @@
 % rd_runMEGPreproc.m
 
 %% setup
-exptDir = '/Local/Users/denison/Data/Cupcake/MEG';
-sessionDir = 'R1507_20190425';
-fileBase = 'R1507_CupcakeAperture_4.25.19';
+% exptDir = '/Local/Users/denison/Data/Cupcake/MEG';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG';
+sessionDir = 'R1507_20190725';
+fileBase = 'R1507_CupcakeAperture_7.25.19';
 
 dataDir = sprintf('%s/%s', exptDir, sessionDir);
 preprocDir = sprintf('%s/preproc', dataDir);

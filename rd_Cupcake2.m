@@ -2,12 +2,13 @@
 
 %% Setup
 exptName = 'CupcakeAperture';
-exptDir = '/Local/Users/denison/Data/Cupcake';
+% exptDir = '/Local/Users/denison/Data/Cupcake';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 
 megDir = 'MEG';
 
-sessionDir = 'R1507_20190425'; %'R1507_20190425/disk';
-analStr = 'ebi'; %'disk_ebci';
+sessionDir = 'R1507_20190725/disk'; %'R1507_20190425/disk';
+analStr = 'disk_ebi'; %'disk_ebci';
 
 fileBase = sessionDirToFileBase(sessionDir, exptName);
 

@@ -19,9 +19,9 @@ audioChannel = 191;
 photodiodeChannel = 192;
 
 %% load & read dataset 
-exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Data/MEG'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
-sessionDir = 'R1507_20190425';
-filename = 'R1507_CupcakeAperture_4.25.19_disk_ebi';
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
+sessionDir = 'R1507_20190725/disk';
+filename = 'R1507_CupcakeAperture_7.25.19_disk_ebi';
 
 dataDir = sprintf('%s/%s', exptDir, sessionDir);
 prepDir = sprintf('%s/prep', dataDir);
@@ -151,7 +151,7 @@ cleanPrepData.channels_rejected = setdiff(prep_data.label,clean_data2.label);
 [C,ia,ib] = intersect(trl,clean_data1.cfg.trl,'rows');
 cleanPrepData.trial_info = [C,trigger_info(ia,6)];
 
-save([prepDir,filename,'_prepCleanData.mat'],'cleanPrepData', '-v7.3')
+save([prepDir,'/',filename,'_prepCleanData.mat'],'cleanPrepData', '-v7.3')
 
 %% save trials_rejected and channels_rejected separately
 trials_rejected = cleanPrepData.trials_rejected(:,1);
