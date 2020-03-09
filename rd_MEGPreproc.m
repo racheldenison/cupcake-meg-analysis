@@ -160,7 +160,7 @@ if TSPCA
     
     analStr = [analStr 't'];
     tspcaFile = sprintf('%s_%s.sqd', filename(1:end-4), analStr);
-    
+   
     % run sqd denoise
     % this writes the tspca sqd file
     if exist(tspcaFile,'file')
