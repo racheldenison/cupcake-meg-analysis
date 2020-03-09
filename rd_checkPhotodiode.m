@@ -1,15 +1,15 @@
 % rd_checkPhotodiode.m
 
 %% setup 
-% exptDir = '/Local/Users/denison/Data/TANoise';
-exptDir = '/Local/Users/denison/Data/Cupcake';
-sessionDir = 'R1507_20190425';
+exptDir = '/Local/Users/denison/Data/TA2';
+% exptDir = '/Local/Users/denison/Data/Cupcake';
+sessionDir = 'PDTest_20190619';
 
 behavDir = 'Behavior';
 eyeDir = 'Eye';
 megDir = 'MEG';
 
-subject = 'R1507_CupcakeAperture_4.25.19';
+subject = 'PDTest_TA2_6.19.19';
 run = 1;
 
 behavDataName = sprintf('%s/%s/%s/%s_run%01d*.mat', exptDir, behavDir, sessionDir, subject, run);
@@ -23,8 +23,8 @@ trigNames = {'flip'};
 nTrigs = numel(trigNames);
 
 % triggerChannels = 161:168;
-triggerChannels = 162;
-% triggerChannels = 166;
+% triggerChannels = 162;
+triggerChannels = 167; %166 = targets in TANoise, 167 = blank in TANoise
 photodiodeChannel = 192;
 
 %% Load MEG data
@@ -71,7 +71,7 @@ plot(t, pd)
 plot(t, tr)
 plot(trTimes, 4*ones(size(trTimes)), '.', 'MarkerSize', 20)
 plot(pdTimes, 0.5*ones(size(pdTimes)), '.', 'MarkerSize', 20)
-xlim([0 0.5])
+xlim([-0.5 0.5])
 title(sprintf('Run %d', run))
 
 alld = pdTimes - trTimes;

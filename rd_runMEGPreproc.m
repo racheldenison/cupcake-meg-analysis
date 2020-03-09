@@ -3,6 +3,7 @@
 %% setup
 % exptDir = '/Local/Users/denison/Data/Cupcake/MEG';
 exptDir = '/Users/kantian/Dropbox/Data/Cupcake/MEG'; 
+exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG';
 sessionDir = 'R1507_20190725';
 fileBase = 'R1507_CupcakeAperture_7.25.19';
 

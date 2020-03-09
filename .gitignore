@@ -2,3 +2,6 @@
 
 Icon?
 *~
+.DS_Store
+backup/
+*.jpg
