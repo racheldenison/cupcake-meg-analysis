@@ -2,6 +2,7 @@
 
 %% setup
 % exptDir = '/Local/Users/denison/Data/Cupcake/MEG';
+exptDir = '/Users/kantian/Dropbox/Data/Cupcake/MEG'; 
 exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG';
 sessionDir = 'R1507_20190725';
 fileBase = 'R1507_CupcakeAperture_7.25.19';
@@ -35,7 +36,8 @@ runs = 1:nRuns
 for iRun = 1:nRuns
     run = runs(iRun);
     runFile = sprintf('%s/%s', preprocDir, runFiles(iRun).name);
-    preprocFileName = rd_MEGPreproc(runFile, figDir);
+    % preprocFileName = rd_MEGPreproc(runFile, figDir);
+    preprocFileName = meg_preproc(runFile, figDir);
 end
 
 %% combine run files into preprocessed sqd
