@@ -34,17 +34,10 @@ removeBadChannels = 1; % b dead and outlier sd channels
 interpolate = 1; % i 
 
 environmentalDenoise = 1; % e
-<<<<<<< HEAD
 TSPCA = 1; % t 
 
 hpfilter = 1; % f 
 components = 1; % c, pca/ica
-=======
-TSPCA = 0; % t 
-
-hpfilter = 0; % f 
-components = 0; % c, pca/ica
->>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
 
 rejectPC = 0; % auto reject 1st pc?
 rejectIC = 0; % auto reject ic?
@@ -70,11 +63,7 @@ saveFigs = 1;
 
 analStr = [];
 
-<<<<<<< HEAD
 deleteStepFiles = 0; 
-=======
-deleteStepFiles = 1; 
->>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
 
 %% Get the MEG data
 % data is time x channels
@@ -247,22 +236,12 @@ end
 
 %% Save data preprocessed up to this point
 preFile = sprintf('%s_%s.sqd', filename(1:end-4), analStr);
-<<<<<<< HEAD
 
 if exist(preFile,'file')
     error('%s_%s.sqd already exists ... will not overwrite. exiting.', filename(1:end-4), analStr)
 else
     sqdwrite(filename, preFile, 'data', data);
 end
-=======
-sqdwrite(filename, preFile, 'data', data);
-
-% if exist(preFile,'file')
-%     error('%s_%s.sqd already exists ... will not overwrite. exiting.', filename(1:end-4), analStr)
-% else
-%     sqdwrite(filename, preFile, 'data', data);
-% end
->>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
 
 dataset = preFile;
 
@@ -342,14 +321,9 @@ if hpfilter
         plot(data(:,megChannels+1))
         title('high pass filter')
     end
-<<<<<<< HEAD
 end
 
     filterFile = sprintf('%s_%s.sqd', filename(1:end-4), analStr);
-=======
-    
-        filterFile = sprintf('%s_%s.sqd', filename(1:end-4), analStr);
->>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
     
     if exist(filterFile,'file')
         error('%s_%s.sqd already exists ... will not overwrite. exiting.', filename(1:end-4), analStr)
@@ -364,10 +338,6 @@ end
     end
 
     dataset = filterFile;
-<<<<<<< HEAD
-=======
-end
->>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
 
 %% PCA/ICA
 if components
