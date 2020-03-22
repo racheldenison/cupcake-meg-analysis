@@ -3,12 +3,12 @@
 %% Setup
 exptName = 'CupcakeAperture';
 % exptDir = '/Local/Users/denison/Data/Cupcake';
-exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
+exptDir = '/Volumes/purplab2/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 
 megDir = 'MEG';
 
-sessionDir = 'R1507_20190725/disk'; %'R1507_20190425/concentric';
-analStr = 'disk_ebi'; %'concentric_ebci';
+sessionDir = 'R1507_20200311/vignette'; %'R1507_20190425/concentric';
+analStr = 'vignette_bie'; %'concentric_ebci';
 
 fileBase = sessionDirToFileBase(sessionDir, exptName);
 
@@ -34,13 +34,21 @@ Fs = D.Fs;
 eventTimes = D.eventTimes;
 orientations = D.orientations;
 condData = D.condData;
-condDataMean = D.condDataMean;
 condTrials = D.condTrials;
 trialsHeaders = D.trialsHeaders;
 
 nT = numel(t);
 nOr = numel(orientations);
 nTrials = size(condData,3);
+
+%% Baseline
+% baselinePeriod = t;
+% inBaseline = ismember(t,baselinePeriod);
+% baselineDC = mean(condData(inBaseline,:,:,:),1);
+% baselineTSeries = repmat(baselineDC,[size(condData,1),1,1,1]);
+% 
+% % condDataB = condData-baselineTSeries;
+% condData = condData-baselineTSeries;
 
 %% Decoding setup
 getWeights = 1;

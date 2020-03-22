@@ -3,12 +3,12 @@
 %% Setup
 exptName = 'CupcakeAperture';
 % exptDir = '/Local/Users/denison/Data/Cupcake';
-exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
+exptDir = '/Volumes/purplab2/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
 
 megDir = 'MEG';
 
-sessionDir = 'R1507_20190725/disk'; %'R1507_20190425/disk';
-analStr = 'disk_ebi'; %'disk_ebci';
+sessionDir = 'R1507_20200311/vignette'; %'R1507_20190425/disk';
+analStr = 'vignette_bie'; %'disk_ebci';
 
 fileBase = sessionDirToFileBase(sessionDir, exptName);
 
@@ -32,7 +32,7 @@ Fs = D.Fs;
 eventTimes = D.eventTimes;
 orientations = D.orientations;
 condData = D.condData;
-condDataMean = D.condDataMean;
+% condDataMean = D.condDataMean;
 condTrials = D.condTrials;
 trialsHeaders = D.trialsHeaders;
 
@@ -40,19 +40,22 @@ nT = numel(t);
 nOr = numel(orientations);
 nTrials = size(condData,3);
 
-dataMean = nanmean(condDataMean,3);
+% dataMean = nanmean(condDataMean,3);
 
 %% Zscore
 % condDataZ = (condData - repmat(nanmean(condData,3),[1 1 nTrials 1]))./...
 %     repmat(nanstd(condData,0,3),[1 1 nTrials 1]);
 
 %% Baseline
-% baselinePeriod = t;
-% inBaseline = ismember(t,baselinePeriod);
-% baselineDC = mean(condData(inBaseline,:,:,:),1);
-% baselineTSeries = repmat(baselineDC,[size(condData,1),1,1,1]);
-% 
+baselinePeriod = t;
+inBaseline = ismember(t,baselinePeriod);
+baselineDC = mean(condData(inBaseline,:,:,:),1);
+baselineTSeries = repmat(baselineDC,[size(condData,1),1,1,1]);
+
 % condDataB = condData-baselineTSeries;
+condData = condData-baselineTSeries;
+condDataMean = squeeze(nanmean(condData,3));
+dataMean = nanmean(condDataMean,3);
 
 %% High-pass filtered time series
 % samplingInterval = 1;
@@ -127,8 +130,9 @@ title(sprintf('Orientation %d, channels %d-%d', orientations(iOr), channels(1), 
 
 %% Topo movie
 times = 0:10:400;
-clims = [-500 500];
+% clims = [-500 500]; % pre-reno
 % clims = [-1500 1500];
+clims = [-1e5 1e5]; % post-reno
 
 trial = 4;
 iOr = 1;
@@ -148,8 +152,9 @@ for iT = 1:numel(times)
 end
 
 %% Topo of each orientation at some time
-selectedTimes = [120 185 260];
-clims = [-700 700];
+selectedTimes = [120 185 215 260 475];
+% clims = [-700 700];
+clims = [-250 250];
 
 for iTime = 1:numel(selectedTimes)
     selectedTime = selectedTimes(iTime);
@@ -160,10 +165,11 @@ for iTime = 1:numel(selectedTimes)
         vals = condDataMean(t==selectedTime,:,iOr);
         
         ssm_plotOnMesh(vals, '', [], data_hdr, '2d',[]);
-        set(gca,'CLim',clims)
+%         set(gca,'CLim',clims)
         title(sprintf('%2.1f%s', orientations(iOr), char(176)))
     end
     rd_supertitle2(sprintf('%d ms', selectedTime))
+    colorbar
     
     if saveFigs
         rd_saveAllFigs(gcf, {sprintf('orientations_%dms', selectedTime)}, 'map', figDir);
@@ -171,8 +177,8 @@ for iTime = 1:numel(selectedTimes)
 end
 
 %% Topo of different trials at some time
-selectedTime = 120;
-% clims = [-700 700];
+selectedTime = 215;
+clims = [-500 500];
 
 trialsToPlot = [2 75 76 78];
 iOr = 1;
@@ -185,7 +191,7 @@ for iTrial = 1:numel(trialsToPlot)
     
     ssm_plotOnMesh(vals, '', [], data_hdr, '2d',[]);
     colorbar
-%     set(gca,'CLim',clims)
+    set(gca,'CLim',clims)
     title(sprintf('trial %d', trial))
 end
 rd_supertitle2(sprintf('%d ms', selectedTime))
@@ -196,10 +202,10 @@ end
 
 %% Pairwise correlations between split half means
 % selectedChannels = [13 14 51 2 20 134 15 47 6 25]; % ebci
-selectedChannels = [134 15 43 107 14 6 90 86 10 60]; % ebi
-% selectedChannels = 1:157;
+% selectedChannels = [134 15 43 107 14 6 90 86 10 60]; % ebi
+selectedChannels = 1:157;
 
-selectedTime = 120;
+selectedTime = 215; %120, 215;
 iT = find(t==selectedTime);
 
 nTrialSets = 2;
@@ -256,7 +262,7 @@ end
 
 
 %% Pairwise correlations between all pairs of trials
-selectedTime = 120;
+selectedTime = 215; %120;
 iT = find(t==selectedTime);
 
 r = [];

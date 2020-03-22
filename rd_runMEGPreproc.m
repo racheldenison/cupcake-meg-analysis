@@ -4,7 +4,11 @@
 % exptDir = '/Local/Users/denison/Data/Cupcake/MEG';
 exptDir = '/Users/kantian/Dropbox/Data/Cupcake/MEG'; 
 % exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG';
+<<<<<<< HEAD
 sessionDir = 'R1507_20200311/vignette';
+=======
+sessionDir = 'R1507_20200311/disk';
+>>>>>>> b1b2d871fd764e06d0e338111b29fe8cb00697cd
 fileBase = 'R1507_CupcakeAperture_3.11.20';
 
 dataDir = sprintf('%s/%s', exptDir, sessionDir);
