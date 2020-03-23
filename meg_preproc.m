@@ -11,6 +11,9 @@ function preprocFileName = meg_preproc(filename, figDir, badChannels, exptShortN
 % filename = '/Users/kantian/Dropbox/Data/TA2/MEG/R1507_20190627/R1507_TA2_6.27.19_run01.sqd';
 % figDir = 'Users/kantian/Dropbox/Data/TA2/MEG/R1507_20190627/preproc_March10Test/figures';
 
+% external Karen
+% filename = '/Volumes/kantian/Dropbox/Data/Cupcake/MEG/R1507_20200311/disk/preproc/R1507_CupcakeAperture_3.11.20_run01_disk.sqd';
+
 % remember, these channel numbers use zero indexing
 megChannels = 0:156;
 refChannels = 157:159;
@@ -268,8 +271,8 @@ if TSPCA
         error('tspcaFile already exists ... will not overwrite. note that continuing the script will delete this file.')
     else
         fprintf('Running sqdDenoise\n');
-        sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels-1, 'no', ...
-            p.channelForSaturatingChannels, 'yes', tspcaFile); % do not zero saturated 
+        sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels, 'no', ...
+            p.channelForSaturatingChannels, 'no', tspcaFile); % do not zero saturated 
         % sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels-1, 'no', ...
             % precueChannel, 'yes', tspcaFile); % do not zero saturated 
     end
