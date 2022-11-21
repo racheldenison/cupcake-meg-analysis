@@ -19,9 +19,10 @@ audioChannel = 191;
 photodiodeChannel = 192;
 
 %% load & read dataset 
-exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
-sessionDir = 'R1507_20190725/disk';
-filename = 'R1507_CupcakeAperture_7.25.19_disk_ebi';
+% exptDir = '/Volumes/purplab/EXPERIMENTS/1_Current_Experiments/Rachel/Cupcake/Cupcake_Aperture/MEG'; % '/Local/Users/denison/Google Drive/Shared/Projects/Cupcake/Code/MEG_Expt/Pilot1_Aperture';
+exptDir = '/Users/kantian/Dropbox/Data/Cupcake/MEG'; 
+sessionDir = 'R1507_20200311/vignette';
+filename = 'R1507_CupcakeAperture_3.11.20_vignette';
 
 dataDir = sprintf('%s/%s', exptDir, sessionDir);
 prepDir = sprintf('%s/prep', dataDir);

@@ -23,7 +23,7 @@ if nargin < 3
     badChannels = [];
 end
 if nargin < 4
-    error('Please provide expt short name, eg: TA2_Preproc, TA2_Analysis, Cupcake') % TA2_Preproc, TANoise_Preproc, Cupcake
+    error('Please provide exptShortName, eg: TA2_Preproc, TA2_Analysis, Cupcake') % TA2_Preproc, TANoise_Preproc, Cupcake
 end
 
 %%  preproc options
@@ -34,10 +34,10 @@ removeBadChannels = 1; % b dead and outlier sd channels
 interpolate = 1; % i 
 
 environmentalDenoise = 1; % e
-TSPCA = 0; % t 
+TSPCA = 1; % t 
 
-hpfilter = 0; % f 
-components = 0; % c, pca/ica
+hpfilter = 1; % f 
+components = 1; % c, pca/ica
 
 rejectPC = 0; % auto reject 1st pc?
 rejectIC = 0; % auto reject ic?
@@ -269,7 +269,7 @@ if TSPCA
         error('tspcaFile already exists ... will not overwrite. note that continuing the script will delete this file.')
     else
         fprintf('Running sqdDenoise\n');
-        sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels-1, 'no', ...
+        sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels, 'no', ...
             p.channelForSaturatingChannels, 'yes', tspcaFile); % do not zero saturated 
         % sqdDenoise(sizeOfBlocks, shifts, 0, sourceFile, badChannels-1, 'no', ...
             % precueChannel, 'yes', tspcaFile); % do not zero saturated 
