@@ -1,9 +1,11 @@
 function preprocFileName = rd_MEGPreproc(filename, figDir, badChannels)
 
+% old preproc script
 %% Setup
 % desk
 % filename = '/Local/Users/denison/Data/TAPilot/MEG/R0817_20140820/R0817_TAPilot_8.20.14.sqd';
 % filename = '/Local/Users/denison/Data/TAPilot/MEG/R0890_20140806/preproc/R0890_TAPilot_8.06.14_run01.sqd';
+% filename = '/Volumes/kantian/Dropbox/Data/Cupcake/MEG/R1507_20200311/disk/preproc/R1507_CupcakeAperture_3.11.20_run01_disk.sqd';
 % figDir = '/Local/Users/denison/Data/TAPilot/MEG/R0890_20140806/Runs/figures';
 
 % remember, these channel numbers use zero indexing
@@ -20,12 +22,14 @@ end
 
 % preproc options
 Fl = 60; % line noise frequency
-environmentalDenoise = 1;
-applyLineNoiseFilter = 0;
-removeBadChannels = 1; 
-TSPCA = 0;
-components = 1; % pca/ica
-interpolate = 1;
+
+
+removeBadChannels = 1; %b
+interpolate = 1; %i
+environmentalDenoise = 1; %e
+TSPCA = 1; %t
+applyLineNoiseFilter = 1; %f
+components = 1; %p pca/ica
 
 % trial definition (for pca/ica)
 trialDef.trialFunHandle = @mytrialfun_all;
